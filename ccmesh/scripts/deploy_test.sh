@@ -30,6 +30,7 @@ done
 
 echo "done"
 vms=$(echo $vms | sed s/\+/,\ /g)
+echo $vms > vms.tmp
 
 # craft the common.py
 cp common.py.base common.py
