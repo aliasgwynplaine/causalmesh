@@ -16,7 +16,7 @@ serde.workspace = true
 serde_json.workspace = true
 
 [features]
-default = ["opt", "cloud"]
+default = ["ccmesh", "cloud"]
 ccmesh = []
 opt = []
 con = []
