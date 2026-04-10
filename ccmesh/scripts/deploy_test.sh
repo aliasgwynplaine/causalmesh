@@ -11,9 +11,8 @@ key_file=$2
 echo "WS_DIR   -> $ws_dir"
 echo "KEY_FILE -> $key_file"
 # deploy the VMs
-#oarsub -t deploy -l /nodes=5,walltime=5:00:00 -p "host like 'big%'" \
-#'kadeploy3 -f /tmp/deploynodes.${OAR_JOBID} --env-name debian13 -k /home/leon/.ssh/id_rsa.pub && while true; do sleep 1; done'
-# wait for vms
+oarsub -t deploy -l /nodes=5,walltime=5:00:00 -p "host like 'big%'" \
+'kadeploy3 -f /tmp/deploynodes.${OAR_JOBID} --env-name debian13 -k /home/leon/.ssh/id_rsa.pub && while true; do sleep 1; done'
 
 # recover VMs info
 vms=$(oarstat -u -f | grep assigned_hostnames | cut -d "=" -f 2)
@@ -34,31 +33,33 @@ vms=$(echo $vms | sed s/\+/,\ /g)
 
 # craft the common.py
 cp common.py.base common.py
-sed -i "s/WS_DIR_LOC/$ws_dir/g" common.py
-sed -i "s/KEY_FILE_LOC/$key_file/g" common.py
-sed -i "s/SUPERSERVERS/$vms/g" common.py
+sed -i "s/WS_DIR_LOC/${ws_dir//\//\\/}/g" common.py
+sed -i "s/KEY_FILE_LOC/${key_file//\//\\/}/g" common.py
+sed -i "s/SUPERSERVERS/'${vms//, /\', \'}'/g" common.py
 
 echo "attempting to connect with $vms..."
 
 # wait for ssh
-for vm in $(sed s/,//g <<< "$vms"); do
-	while ! nc -z $vm 22; do
-		sleep 38
-	done
-	
-	sleep 39
+for vm in ${$vms//,/}; do
+        while ! nc -z $vm 22; do
+                sleep 37
+        done
 
-	while ! nc -z $vm 22; do
-		sleep 41
-	done
+        echo "one more verification..."
+        sleep 17
 
-	echo "$vm is online"
+        while ! nc -z $vm 22; do
+                sleep 41
+        done
+
+        echo "$vm is online"
 done
 
-echo "good so far"
-exit 0
-# execute upload.py and setup.py
-python3 upload.py
-python3 setup.py
+# presetup script
+for vm in ${$vms//,/}; do
+        echo "running presetup script in $vm"
+	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian13.sh
+done
 
+print("everything is ready. Get a node and execute 'python3 finish_setup.py'")
 
