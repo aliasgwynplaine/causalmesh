@@ -1,6 +1,6 @@
 import argparse
 import subprocess
-from common import CLOUD, SERVERS, WS_DIR, CLOUDLAB_USER
+from common import SERVERS, WS_DIR, CLOUDLAB_USER
 
 def run_collect_output(cmd):
     res = subprocess.run(cmd, stdout=subprocess.PIPE)
@@ -12,6 +12,8 @@ def run_shell(cmd):
 
 def cloudlab():
     for s in SERVERS:
+        print("running presetup script")
+        run_collect_output(['ssh', f"{CLOUDLAB_USER}@{s}", "'bash -s'", '<', f'{WS_DIR}/ccmesh/scripts/presetup-debian13.sh'])
         print("copying files to ", s)
         path = f'{CLOUDLAB_USER}@{s}:~/'
         run_collect_output(['rsync', '--exclude', 'target', '--exclude', 'figures', '-r', f'{WS_DIR}/ccmesh', path])

@@ -1,0 +1,10 @@
+NSERVERS = 5
+
+WS_DIR = 'WS_DIR_LOC' # location of ccmesh and ccmesh-go
+KEY_FILE = 'KEY_FILE_LOC' # location of ssh key file
+CLOUDLAB_USER = 'root' # username on the grid5k vms
+
+MSSERVERS = [SUPERSERVERS]
+MSSERVERS = MSSERVERS[:NSERVERS + 2]
+SERVERS = MSSERVERS
+HOST_SERVERS = [f'{CLOUDLAB_USER}@{s}' for s in SERVERS]
