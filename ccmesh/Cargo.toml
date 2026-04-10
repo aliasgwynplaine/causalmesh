@@ -1,4 +1,5 @@
 [workspace]
+resolver = "2"
 members = [
     "ccmesh",
     "con",
@@ -35,7 +36,7 @@ hyper = { version = "0.14", features = ["full"] }
 rand = "0.8"
 zipf = "7.0.0"
 either = "1.8.0"
-flashmap = "0.1.0"
+flashmap = "0.2.0"
 dashmap = { version = "5.4.0", features = ["serde"] }
 fxhash = "0.2.1"
 futures = "0.3.25"

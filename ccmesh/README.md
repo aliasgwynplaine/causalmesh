@@ -34,7 +34,7 @@ echo "CONFIG SET protected-mode no" | redis-cli
 # Run experiments
 To run Causalmesh, HydroCache-Con and HydroCache-Opt
 
-change feature flags in `Cargo.toml` to
+change feature flags in `config/Cargo.toml` to
 ```
 default = ["ccmesh", "cloud"]
 ```
