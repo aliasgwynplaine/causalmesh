@@ -46,7 +46,7 @@ for vm in ${vms//,/}; do
                 sleep 37
         done
 
-        echo "one more verification..."
+        echo "one more verification for $vm..."
         sleep 17
 
         while ! nc -z $vm 22; do
@@ -63,5 +63,5 @@ for vm in ${vms//,/}; do
 	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian13.sh
 done
 
-print("everything is ready. Get a node and execute 'bash finish_setup.sh'")
+echo "everything is ready. Get a node and execute 'bash finish_setup.sh'" 
 
