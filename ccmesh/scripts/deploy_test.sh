@@ -12,7 +12,7 @@ echo "WS_DIR   -> $ws_dir"
 echo "KEY_FILE -> $key_file"
 # deploy the VMs
 oarsub -t deploy -l /nodes=5,walltime=5:00:00 -p "host like 'big%'" \
-'kadeploy3 -f /tmp/deploynodes.${OAR_JOBID} --env-name debian13 -k /home/leon/.ssh/id_rsa.pub && while true; do sleep 1; done'
+'kadeploy3 -f /tmp/deploynodes.${OAR_JOBID} --env-name debian12 -k /home/leon/.ssh/id_rsa.pub && while true; do sleep 1; done'
 
 # recover VMs info
 vms=$(oarstat -u -f | grep assigned_hostnames | cut -d "=" -f 2)
@@ -59,8 +59,9 @@ done
 # presetup script
 for vm in ${vms//,/}; do
         echo "running presetup script in $vm"
+        ssh-keygen -f '/home/leon/.ssh/known_hosts' -R \'$vm\'
 	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian13.sh
 done
 
-print("everything is ready. Get a node and execute 'python3 finish_setup.py'")
+print("everything is ready. Get a node and execute 'bash finish_setup.sh'")
 
