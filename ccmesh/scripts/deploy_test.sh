@@ -41,7 +41,7 @@ sed -i "s/SUPERSERVERS/'${vms//, /\', \'}'/g" common.py
 echo "attempting to connect with $vms..."
 
 # wait for ssh
-for vm in ${$vms//,/}; do
+for vm in ${vms//,/}; do
         while ! nc -z $vm 22; do
                 sleep 37
         done
@@ -57,7 +57,7 @@ for vm in ${$vms//,/}; do
 done
 
 # presetup script
-for vm in ${$vms//,/}; do
+for vm in ${vms//,/}; do
         echo "running presetup script in $vm"
 	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian13.sh
 done
