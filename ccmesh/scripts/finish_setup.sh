@@ -6,6 +6,6 @@ python3 upload.py
 python3 setup.py
 
 rsvr=$(cat vms.tmp | cut -d "," -f 1)
-ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < redis_setup.sh
+ssh -o StrictHostKeyChecking=no root@$rsvr 'bash -s' < redis_setup.sh
 
 echo "Setup is normally done in all the topology."
