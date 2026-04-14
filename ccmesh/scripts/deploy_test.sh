@@ -52,7 +52,7 @@ while [[ $gtfo -lt 5 ]]; do
 		gtfo=$(( gtfo + ${ready[$vm]} ))
 	done
 
-	if [[ $gtfo lt 5 ]]; then
+	if [[ $gtfo -lt 5 ]]; then
 		echo "servers are not ready."
 		
 		echo "Sleepping..."
