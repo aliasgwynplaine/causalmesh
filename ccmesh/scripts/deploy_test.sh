@@ -42,7 +42,7 @@ while [[ $gtfo -lt 5 ]]; do
 	for vm in ${vms//,/}; do
 		if nc -z $vm 22; then
 			ready[$vm]=1
-		elif
+		else
 			ready[$vm]=0
 		fi
 	done
@@ -56,7 +56,7 @@ while [[ $gtfo -lt 5 ]]; do
 		echo "servers are not ready."
 		echo "Sleepping..."
 		sleep 37
-	elif
+	else
 		echo "server ready"
 		continue
 	fi
