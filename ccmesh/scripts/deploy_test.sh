@@ -54,7 +54,6 @@ while [[ $gtfo -lt 5 ]]; do
 
 	if [[ $gtfo -lt 5 ]]; then
 		echo "servers are not ready."
-		
 		echo "Sleepping..."
 		sleep 37
 	fi
@@ -86,7 +85,7 @@ sed -i "s/REDISSERVER/$rsrvr/g" config/cloud.json
 for vm in ${vms//,/}; do
 	echo "running presetup script in $vm"
 	ssh-keygen -f '/home/leon/.ssh/known_hosts' -R \'$vm\'
-	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian13.sh
+	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian12.sh
 done
 
 echo "everything is ready. Get a node and execute 'bash finish_setup.sh'" 
