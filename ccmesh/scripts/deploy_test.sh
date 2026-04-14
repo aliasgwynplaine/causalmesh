@@ -38,6 +38,12 @@ sed -i "s/WS_DIR_LOC/${ws_dir//\//\\/}/g" common.py
 sed -i "s/KEY_FILE_LOC/${key_file//\//\\/}/g" common.py
 sed -i "s/SUPERSERVERS/'${vms//, /\', \'}'/g" common.py
 
+# craft the json file
+cp $ws_dir/ccmesh/config/cloud.json.old $ws_dir/ccmesh/config/cloud.json
+sed -i "s/SUPERSERVERS/\"${vms//, /\", \"}\"/g" config/cloud.json
+rsrvr=$(echo $vms | cut -d "," -f 1)
+sed -i "s/REDISSERVER/$rsrvr/g" config/cloud.json
+
 echo "attempting to connect with $vms..."
 
 # wait for ssh

@@ -93,6 +93,9 @@ pub async fn send_req(nightcore_idx: usize, req: String, uri: &str) -> Bytes {
         nightcore =
             "http://".to_owned() + &NIGHTCORES[nightcore_idx].to_owned() + "/function/" + uri;
     }
+
+    println!("uri: {}", nightcore);
+
     let r = hyper::Request::builder()
         .method(hyper::Method::POST)
         .uri(nightcore)
