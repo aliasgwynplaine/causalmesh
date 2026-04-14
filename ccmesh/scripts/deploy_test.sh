@@ -22,17 +22,55 @@ vms="${vms%[[:space:]]}"
 echo "Waiting for hostnames ..."
 
 while [[ ${#vms} -lt 2 ]]; do
-	sleep 27
+	sleep 37
 	vms=$(oarstat -u -f | grep assigned_hostnames | cut -d "=" -f 2)
 	vms="${vms#[[:space:]]}"
 	vms="${vms%[[:space:]]}"
 done
 
+echo "Waiting for hostnames to boot..."
+sleep 23
 echo "done"
 vms=$(echo $vms | sed s/\+/,\ /g)
+
+# wait for ssh
+while [[ $gtfo -lt 5 ]]; do
+	echo "attempting to connect with $vms..."
+	gtfo=0
+	declare -A ready
+
+	for vm in ${vms//,/}; do
+		ready[$vm]=0
+	done
+
+	for vm in ${vms//,/}; do
+		ready[$vm]=$(! nc -z $vm 22)
+	done
+
+	for vm in ${vms//,/}; do
+		echo "$vm -> ${ready[$vm]}"
+		gtfo=$(( gtfo + ${ready[$vm]} ))
+	done
+
+	if [[ $gtfo lt 5 ]]; then
+		echo "servers are not ready."
+		
+		echo "Sleepping..."
+		sleep 37
+	fi
+
+	echo "Retrying..."
+	vms=$(oarstat -u -f | grep assigned_hostnames | cut -d "=" -f 2)
+	vms="${vms#[[:space:]]}"
+	vms="${vms%[[:space:]]}"
+	vms=$(echo $vms | sed s/\+/,\ /g)
+done
+
+echo "Saving hosts in vms.tmp"
 echo $vms > vms.tmp
 
 # craft the common.py
+echo "crafting common.py and config/cloud.json..."
 cp common.py.base common.py
 sed -i "s/WS_DIR_LOC/${ws_dir//\//\\/}/g" common.py
 sed -i "s/KEY_FILE_LOC/${key_file//\//\\/}/g" common.py
@@ -44,28 +82,10 @@ sed -i "s/SUPERSERVERS/\"${vms//, /\", \"}\"/g" config/cloud.json
 rsrvr=$(echo $vms | cut -d "," -f 1)
 sed -i "s/REDISSERVER/$rsrvr/g" config/cloud.json
 
-echo "attempting to connect with $vms..."
-
-# wait for ssh
-for vm in ${vms//,/}; do
-        while ! nc -z $vm 22; do
-                sleep 37
-        done
-
-        echo "one more verification for $vm..."
-        sleep 17
-
-        while ! nc -z $vm 22; do
-                sleep 41
-        done
-
-        echo "$vm is online"
-done
-
 # presetup script
 for vm in ${vms//,/}; do
-        echo "running presetup script in $vm"
-        ssh-keygen -f '/home/leon/.ssh/known_hosts' -R \'$vm\'
+	echo "running presetup script in $vm"
+	ssh-keygen -f '/home/leon/.ssh/known_hosts' -R \'$vm\'
 	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian13.sh
 done
 
