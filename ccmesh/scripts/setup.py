@@ -6,7 +6,7 @@ def setup():
     group = ThreadingGroup(*HOST_SERVERS, connect_kwargs={
         'key_filename': KEY_FILE,
     })
-    res = group.run("bash ccmesh/scripts/setup-debian13.sh")
+    res = group.run("bash ccmesh/scripts/setup-debian12.sh")
     print(res)
 
 
