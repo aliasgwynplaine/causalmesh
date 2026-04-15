@@ -30,7 +30,6 @@ done
 
 echo "Waiting for hostnames to boot..."
 sleep 23
-echo "done"
 vms=$(echo $vms | sed s/\+/,\ /g)
 
 # wait for ssh
@@ -40,15 +39,18 @@ while [[ $gtfo -lt 5 ]]; do
 	declare -A ready
 
 	for vm in ${vms//,/}; do
+		echo -n "Trying $vm... "
+
 		if nc -z $vm 22; then
 			ready[$vm]=1
+			echo "ok!"
 		else
 			ready[$vm]=0
+			echo "error"
 		fi
 	done
 
 	for vm in ${vms//,/}; do
-		echo "$vm -> ${ready[$vm]}"
 		gtfo=$(( gtfo + ${ready[$vm]} ))
 	done
 
@@ -80,9 +82,9 @@ sed -i "s/SUPERSERVERS/'${vms//, /\', \'}'/g" common.py
 
 # craft the json file
 cp $ws_dir/ccmesh/config/cloud.json.old $ws_dir/ccmesh/config/cloud.json
-sed -i "s/SUPERSERVERS/\"${vms//, /\", \"}\"/g" config/cloud.json
+sed -i "s/SUPERSERVERS/\"${vms//, /\", \"}\"/g" $ws_dir/ccmesh/config/cloud.json
 rsrvr=$(echo $vms | cut -d "," -f 1)
-sed -i "s/REDISSERVER/$rsrvr/g" config/cloud.json
+sed -i "s/REDISSERVER/$rsrvr/g" $ws_dir/ccmesh/config/cloud.json
 
 # presetup script
 for vm in ${vms//,/}; do
