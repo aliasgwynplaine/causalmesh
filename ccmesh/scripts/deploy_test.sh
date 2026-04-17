@@ -85,11 +85,13 @@ cp $ws_dir/ccmesh/config/cloud.json.old $ws_dir/ccmesh/config/cloud.json
 sed -i "s/SUPERSERVERS/\"${vms//, /\", \"}\"/g" $ws_dir/ccmesh/config/cloud.json
 rsrvr=$(echo $vms | cut -d "," -f 1)
 sed -i "s/REDISSERVER/$rsrvr/g" $ws_dir/ccmesh/config/cloud.json
+cp $ws_dir/ccmesh-go/pkg/bash/client.go.old $ws_dir/ccmesh-go/pkg/bash/client.go
+sed -i "s/REDISSERVER/$rsrvr/g" $ws_dir/ccmesh-go/pkg/base/client.go
+rm $HOME/.ssh/known_hosts # fuck it
 
 # presetup script
 for vm in ${vms//,/}; do
 	echo "running presetup script in $vm"
-	ssh-keygen -f '/home/leon/.ssh/known_hosts' -R \'$vm\'
 	ssh -o StrictHostKeyChecking=no root@$vm 'bash -s' < $ws_dir/ccmesh/scripts/presetup-debian12.sh
 done
 
