@@ -86,7 +86,7 @@ cp $ws_dir/ccmesh/config/cloud.json.old $ws_dir/ccmesh/config/cloud.json
 sed -i "s/SUPERSERVERS/\"${vms//, /\", \"}\"/g" $ws_dir/ccmesh/config/cloud.json
 rsrvr=$(echo $vms | cut -d "," -f 1)
 sed -i "s/REDISSERVER/$rsrvr/g" $ws_dir/ccmesh/config/cloud.json
-cp $ws_dir/ccmesh-go/pkg/bash/client.go.old $ws_dir/ccmesh-go/pkg/bash/client.go
+cp $ws_dir/ccmesh-go/pkg/base/client.go.old $ws_dir/ccmesh-go/pkg/base/client.go
 sed -i "s/REDISSERVER/$rsrvr/g" $ws_dir/ccmesh-go/pkg/base/client.go
 rm $HOME/.ssh/known_hosts # fuck it
 
