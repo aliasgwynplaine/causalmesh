@@ -28,8 +28,9 @@ while [[ ${#vms} -lt 2 ]]; do
 	vms="${vms%[[:space:]]}"
 done
 
+echo "Hostnames: $vms"
 echo "Waiting for hostnames to boot..."
-sleep 23
+sleep 33
 vms=$(echo $vms | sed s/\+/,\ /g)
 
 # wait for ssh
